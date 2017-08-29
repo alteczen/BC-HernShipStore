@@ -1,0 +1,148 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+
+<div class="error"></div>                    
+<div class="guideBox">
+    <div class="header">
+        <div class="guideIcon"><img src="/product_images/uploaded_images/guide.gif" /></div>
+        <h3>Service Manual Selector <span>Find the manual you need</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple col2">
+    <li id="stepOne">
+        <div class="question">1) Manufacturer: </div>
+        <div class="selectBox">            
+            <select id="manufacturer" name="manufacturer">
+                <option value="">--</option>
+            </select>        
+        </div>
+    </li>
+    <li id="stepTwo">
+       <!-- <div class="question">2) Model &amp; Year:</div>
+        <div class="selectBox">
+            <select id="model" name="model" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>-->
+    </li>           
+    </ul>
+</div>
+                        
+                        <div id="filteredItems"></div>
+                        
+                        <div id="subCats">%%SNIPPET_SubCategories%%</div>
+                        <button class="js-faceted-search-action btn">%%LNG_FilterBy%%</button>
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+<script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+<script type="text/javascript" src="%%ASSET_CustomJS/jquery.chained.remote.min.js%%"></script>
+<script src="%%ASSET_CustomJS/jquery.modal.min.js%%" type="text/javascript" charset="utf-8"></script>        
+<script type="text/javascript">
+$(document).ready(function() {    
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/manual.php';
+    $.ajax({
+        type: "POST",
+        url: apiurl + "?store=wmd",
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#manufacturer').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });
+    
+    
+    $( "#manufacturer" ).change(function() {
+        if($(this).val() != ""){
+            getGuideResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+    $( "#mfg" ).change(function() {
+        if($(this).val() == "notlisted"){
+            alert('nl 1');
+        }
+    });    
+            
+});
+function getGuideResults(){
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/manual.php';
+    var qs = "";
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+        url: apiurl + "?store=wmd&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showFilteredParts(json,"Manuals");
+                $("#filteredItems").html(resultHtml);
+                $("#LayoutColumn1").hide();
+                $(".js-faceted-search-column").hide();
+                $("#subCats").hide();
+                $("#filteredItems").show();                
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });    
+}
+
+function resetGuide(){
+    $("#stepOne select").val($("#stepOne select option:first").val()).change();    
+    $("#LayoutColumn1").show();
+    $(".js-faceted-search-column").show();
+    $("#subCats").show();
+    $("#filteredItems").hide();
+    //eraseCookie("sierraSelection");
+}    
+
+</script>     
+              
+    </body>
+</html>

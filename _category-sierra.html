@@ -1,0 +1,41 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+<div id="sierraPartsTable"></div>
+<div id="filteredItems"></div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var catId = %%GLOBAL_CatId%%;
+        getTableData(catId);
+    });
+</script>                        
+                       
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+    <script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+    <script type="text/javascript" src="%%ASSET_CustomJS/jquery.tooltip.pack.js%%"></script> 
+    </body>
+</html>

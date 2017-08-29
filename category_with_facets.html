@@ -1,0 +1,40 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+                        <div id="subCats">%%SNIPPET_SubCategories%%</div>
+                        <button class="js-faceted-search-action btn">%%LNG_FilterBy%%</button>
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+    </body>
+</html>

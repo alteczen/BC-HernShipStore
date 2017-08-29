@@ -1,0 +1,214 @@
+<script type="text/javascript">
+lang.InvalidQuantity = "%%LNG_InvalidQuantity%%";
+lang.Calculating = "%%LNG_Calculating%%"
+lang.CalculateShipping = "%%LNG_CalculateShipping%%"
+lang.ChooseShippingMethod = "%%LNG_ChooseShippingMethod%%"
+lang.CartRemoveConfirm = '%%LNG_CartRemoveConfirm%%';
+lang.ConfirmRemoveGiftWrapping = '%%LNG_ConfirmRemoveGiftWrapping%%';
+lang.SelectCountry = '%%LNG_ChooseShippingCountry%%';
+lang.SelectState = '%%LNG_ChooseShippingState%%';
+lang.EnterZip = '%%LNG_EnterShippingZip%%';
+</script>
+<script src="%%GLOBAL_CdnAppPath%%/javascript/jquery/plugins/imodal/imodal.js?%%GLOBAL_JSCacheToken%%" type="text/javascript"></script>
+<div class="Block Moveable Panel" id="CartContent">
+ <div class="XcartCountDown" style="display:none">
+         <div id='productShippingCountDown'>
+            <div id='cd'>Order within <span id='timer'></span> and <u>your order ships <span id='shipDay'>today</span></u>!*</div>
+            <div class='restrictions'><a href="/shipping#samedayshipping" target='_blank'>Some Restrictions Apply</a></div>
+        </div> 
+ </div>
+    <div class="BlockContent">    
+        <div style="display: %%GLOBAL_HideShoppingCartGrid%%">
+            <form enctype="multipart/form-data" onsubmit="return Cart.ValidateQuantityForm(this);" action="cart.php" name="cartForm" id="cartForm" method="post">
+            <input type="hidden" name="action" value="update" />
+            <table class="CartContents Stylize General" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th colspan="2">%%LNG_CartItems%%</th>
+                        <th class="alignCenter">%%LNG_Qty%%</th>
+                        <th class="alignRight">%%LNG_ItemPrice%%</th>
+                        <th class="alignRight">Total</th>
+                    </tr>
+                </thead>               
+                <tbody>
+                    %%SNIPPET_CartItems%%
+                </tbody>
+            </table>
+            <div style="display: none">
+                <input class="btn" type="submit" value="Update Cart" title="%%LNG_Update%%" />
+            </div>
+            <div id="shippingHolder" style="display:none"></div>
+            </form>
+ <div class="pointsEarnedBox">
+   <div id='earnedPoints'></div>
+ </div><div class="cartTotals">
+ <ul>
+                    <li>
+                        <div class="cartTotalLabel">%%LNG_Subtotal%%</div><div class="cartTotalValue earnedPointsValue">%%GLOBAL_CartItemTotal%%</div>
+                    </li>
+                    <li class="coupon" style="display:none">
+                        <div class="cartTotalLabel entry">Coupon Code:</div><div class="cartTotalValue entry"><!--<a href="#" class="toggleBtn">Add Coupon</a>--></div>
+                        <div class="toggleBox entry">
+                            
+                            <script type="text/javascript">
+                                lang.EnterCouponCode = "%%LNG_EnterCouponCode%%";
+                            </script>
+                            <form onsubmit="return Cart.CheckCouponCode()" action="%%GLOBAL_ShopPath%%/cart.php" method="post">
+                                <input type="hidden" name="action" value="applycoupon" />
+                                <div class="CouponCode">                                    
+                                    <input type="text" name="couponcode" id="couponcode" class="Textbox Field100" /><input type="submit" value="Apply" class="btn" />
+                                </div>
+                            </form>
+                        </div>                        
+                        
+                        %%SNIPPET_NormalCoupons%%                        
+                    </li>
+                    <li class="giftCert" style="display:none">
+                        <div class="cartTotalLabel">Gift Certificate:</div><div class="cartTotalValue"><a href="#" class="toggleBtn">Add Gift Certificate</a></div>
+                        <div class="GiftCertificate toggleBox" style="display:none">
+                            <script type="text/javascript">
+                                lang.EnterGiftCertificateCode = "%%LNG_EnterGiftCertificateCode%%";
+                            </script>
+                            <form onsubmit="return Cart.CheckGiftCertificateCode()" action="%%GLOBAL_ShopPath%%/cart.php" method="post">
+                                <input type="hidden" name="action" value="applygiftcertificate" />
+                                <div class="GiftCertificateCode">
+                                    <input type="text" name="giftcertificatecode" id="giftcertificatecode" class="Textbox" /><input type="submit" value="Apply" class="btn" />
+                                </div>
+                            </form>
+                        </div>                        
+                    </li>                    
+                    <li style="%%GLOBAL_HideGiftWrappingTotal%%">
+                        <div class="cartTotalLabel">%%LNG_GiftWrapping%%</div><div class="cartTotalValue">%%GLOBAL_GiftWrappingTotal%%</div>
+                    </li>                    
+                    <li style="%%GLOBAL_HideDiscountAmount%%">
+                        <div class="cartTotalLabel">%%LNG_Discount%%</div><div class="cartTotalValue">%%GLOBAL_DiscountAmount%%</div>
+                    </li>
+                    <li style="%%GLOBAL_HideShoppingCartShippingEstimator%%" class="shippingEstimator">
+                        <div class="cartTotalLabel">Shipping:</div><div class="cartTotalValue">
+                            <a href="#" class="EstimateShippingLink addInfo" onclick="ToggleShippingEstimation2(); return false;">Calculate Shipping</a>
+                            <a href="#" onclick="ToggleShippingEstimation2(); return false;" class="txt-link cancelLink" style="display:none">%%LNG_Cancel%%</a>
+                        </div>                            
+                            
+                            <div class="EstimateShipping" style="display: none;">
+
+                                <div class="form">
+                                    <div class="cartTotalLabel"><span class="Required">*</span>&nbsp;%%LNG_Country%%:</div>
+                                    <div class="cartTotalValue">
+                                        <select name="shippingZoneCountry" id="shippingZoneCountry" onchange="Cart.ToggleShippingEstimateCountry();">
+                                            %%GLOBAL_ShippingCountryList%%
+                                        </select>
+                                    </div>
+
+                                    <div class="cartTotalLabel"><span class="Required" id="shippingZoneStateRequired">*</span>&nbsp;%%LNG_StateProvince%%:</div>
+                                    <div class="cartTotalValue">
+                                        <select style="display: %%GLOBAL_ShippingHideStateList%%" name="shippingZoneState" id="shippingZoneState">
+                                            %%GLOBAL_ShippingStateList%%
+                                        </select>
+                                        <input style="display: %%GLOBAL_ShippingHideStateBox%%" type="text" class="Textbox" name="shippingZoneStateName" id="shippingZoneStateName" value="%%GLOBAL_AddressState%%" />
+                                    </div>
+
+                                    <div class="cartTotalLabel"><span class="Required">*</span>&nbsp;%%LNG_ZipPostcode%%:</div>
+                                    <div class="cartTotalValue"><input type="text" class="Textbox" name="shippingZoneZip" id="shippingZoneZip" value="%%GLOBAL_ShippingZip%%" /></div>
+
+                                    <div class="Submit EstimateShippingButtons">
+                                        <input type="button" onclick="Cart.EstimateShipping();" value="Estimate Shipping" class="btn" />                                        
+                                    </div>
+                                </div>
+
+                                <div class="EstimatedShippingMethods" style="display: none;">
+                                    <div class="ShippingMethodList">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                    </li>
+                    <li style="display:%%GLOBAL_HideShoppingCartShippingCost%%" class="shippingSelection">
+                        <div class="cartTotalLabel">%%LNG_Shipping%% (%%GLOBAL_ShippingProvider%%)</div><div class="cartTotalValue">%%GLOBAL_ShippingCost%%</div>
+                    </li>
+                    %%SNIPPET_FreeShippingCoupons%%
+                    <li style="display: %%GLOBAL_HideShoppingCartHandlingCost%%">
+                        <div class="cartTotalLabel">%%LNG_Handling%%</div><div class="cartTotalValue">%%GLOBAL_HandlingCost%%</div>
+                    </li>
+                    %%GLOBAL_Taxes%%
+                    <li class="grandTotal">
+                        <div class="cartTotalLabel">%%LNG_GrandTotal%% </div><div class="cartTotalValue">%%GLOBAL_CartTotal%%</div>
+                    </li>
+                    %%GLOBAL_InclusiveTaxes%%
+                </ul>
+</div>
+<div class="ProceedToCheckout">
+    <div class="CheckoutButton" style="%%GLOBAL_HideCheckoutButton%%">
+        <a class="btn cartCheckout" href="%%GLOBAL_CheckoutLink%%" onclick="" title="%%LNG_CheckoutButtonTitle%%">Proceed To Checkout</a>
+    </div>
+    <div class="AlternativeCheckout" style="%%GLOBAL_HideMultipleAddressShipping%%">
+        <p class="PTB20"><span style="%%GLOBAL_HideMultipleAddressShippingOr%%"> %%LNG_or%% </span><a href="%%GLOBAL_ShopPath%%/checkout.php?action=multiple"><strong>%%LNG_CheckoutWithMultipleAddresses%%</strong></a></p>
+    </div>
+    %%GLOBAL_AdditionalCheckoutButtons%%
+</div>
+        
+            
+
+            %%GLOBAL_DiscountBreakdown%%
+
+        </div>
+
+
+        <div class="clear"></div>
+        <div style="display: %%GLOBAL_HideShoppingCartEmptyMessage%%">
+            <p class="InfoMessage">
+                %%LNG_NoItemsInCart%%
+            </p>
+            %%LNG_EmptyCartInfo%%
+            <br>
+            <a href="%%GLOBAL_ShopPath%%/">%%LNG_ContinueShopping%%</a> %%LNG_OnThe%% %%GLOBAL_StoreName%% %%LNG_EmptyHomePage%%
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(window).load(function(){
+  $('#shippingZoneCountry').html('<option value="">Choose a Country</option><option value="226" selected>United States</option><option value="038">Canada</option>');
+  if( $('.couponCodeApplied').length ){
+    $('.coupon .entry').hide();
+  }
+  $('.coupon .toggleBtn').click( function(e){
+    e.preventDefault();
+    var link = $(this);
+    $('.coupon .toggleBox').slideToggle('fast', function() {
+        if ($(this).is(':visible')) {
+             link.text('Cancel');                
+        } else {
+             link.text('Add Coupon');                
+        }        
+    });  
+    
+  });
+  $('.giftCert .toggleBtn').click( function(e){
+    e.preventDefault();
+    var link = $(this);
+    $('.giftCert .toggleBox').slideToggle('fast', function() {
+        if ($(this).is(':visible')) {
+             link.text('Cancel');                
+        } else {
+             link.text('Add Gift Certificate');                
+        }        
+    });  
+    
+  });
+  $('.cancelLink').hide();
+  $('.cancelLink').click( function(){
+    $(this).hide();
+  });
+  $('.addInfo').click( function(){
+    $('.cancelLink').show();
+  });
+  
+    if ($('.shippingSelection').is(':visible')) {
+        $('.shippingEstimator>.cartTotalLabel').text($('.shippingSelection .cartTotalLabel').text());
+        $('.shippingEstimator .cartTotalValue .addInfo').text($('.shippingSelection .cartTotalValue').text());
+        $('.shippingSelection').hide();
+    }
+  
+});
+</script>
+

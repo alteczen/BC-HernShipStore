@@ -1,0 +1,271 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    <div class="hide-for-mobile bannerBarTop">%%Panel._BannerBar%%</div>
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+
+<div class="error"></div>
+<div class="guideBox  bimini">
+    <div class="header">
+        <div class="guideIcon"><img src="/content/guide.gif" /></div>
+        <h3>Prop Selection Guide <span>Find the right prop for your boat</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple col5">
+    <li id="stepOne">
+        <div class="question">1) Engine Manufacturer: </div>
+        <div class="selectBox">
+			<select id="emfg" name="emfg">
+			<option value="">--</option>
+			<option value="evinrude">Evinrude</option>
+			<option value="force">Force</option>
+			<option value="honda">Honda</option>
+			<option value="johnson">Johnson</option>
+			<option value="mariner">Mariner</option>
+			<option value="mercruiser stern drive">Mercruiser Stern Drive</option>
+			<option value="mercury">Mercury</option>
+			<option value="omc stern drive">OMC Stern Drive</option>
+			<option value="parsun">Parsun</option>
+			<option value="suzuki">Suzuki</option>
+			<option value="tohatsu/nissan">Tohatsu/Nissan</option>
+			<option value="volvo penta">Volvo Penta</option>
+			<option value="yamaha">Yamaha</option>
+			<option value="yanmar stern drive">Yanmar Stern Drive</option>
+			</select>    
+        </div>
+    </li>
+    <li id="stepTwo">
+        <div class="question">2) Engine Horsepower:</div>
+        <div class="selectBox">       
+            <select id="ehp" name="ehp" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepThree">
+        <div class="question">3) Engine Model:</div>
+        <div class="selectBox">       
+            <select id="emo" name="emo">
+                <option value="">--</option>
+            </select> 
+        </div>	
+
+    </li>
+    <li id="stepFour">
+        <div class="question">4) Engine Year: </div>
+        <div class="selectBox"> 
+            <select id="eyr" name="eyr">
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepFive">
+        <div class="question">5) Prop Pitch:</div>
+        <div class="selectBox">       
+            <select id="ppi" name="ppi">
+                <option value="">--</option>
+            </select> 
+        </div>
+    </li> 	
+    </ul>
+</div>
+                        <div id="filteredItems"></div>
+                                                
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                        <div class="hide-for-desktop bannerBarBottom">%%Panel._BannerBar%%</div>
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+<script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+<script type="text/javascript" src="%%ASSET_CustomJS/jquery.chained.remote.min.js%%"></script>
+<script src="%%ASSET_CustomJS/jquery.modal.min.js%%" type="text/javascript" charset="utf-8"></script>        
+<script type="text/javascript">
+$(document).ready(function() {    
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/propnew2.php';
+    /*
+	$.ajax({
+        type: "POST",
+        url: apiurl,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#emfg').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    }); */
+
+
+    $("#ehp").remoteChained({
+        parents : "#emfg",
+        url : apiurl,
+        loading : "Loading...",
+        clear : true
+    });
+     
+    $("#emo").remoteChained({
+        parents : "#ehp",
+        url : apiurl,
+        loading : "Loading...",
+        clear : true,
+        depends : "#emfg"        
+    });
+    $("#eyr").remoteChained({
+        parents : "#emo",
+        url : apiurl,
+        loading : "Loading...",
+        clear : true,
+        depends : "#emfg,#ehp"        
+    });  	
+	
+    $("#ppi").remoteChained({
+        parents : "#eyr",
+        url : apiurl,
+        loading : "Loading...",
+        clear : true,
+        depends : "#emo,#ehp,#emfg"        
+    });   	
+    $( "#ppi" ).change(function() {
+        if($(this).val() != ""){
+            getGuideResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+
+	$("body").on('change', '.pmaterial select', function() {
+		target = $(this).val();
+		$(".sectionBlock").removeClass('hideMaterial');
+		if(target != 'all'){
+			$(".sectionBlock").each(function(){
+				if(!$(this).hasClass(target)){
+					$(this).addClass('hideMaterial');
+				}
+			});			
+		}	
+	});
+	$("body").on('change', '.pblades select', function() {
+		target = $(this).val();
+		$(".sectionBlock .tr").removeClass('hideBlades');
+		if(target != 'all'){
+			$(".tdblades").each(function(){
+				sectionText =  $.trim($(this).text());
+				if(sectionText != target){
+					$(this).parent().addClass('hideBlades');
+				}
+			});			
+		}	
+	});
+	$("body").on('change', '.protation select', function() {
+		target = $(this).val();
+		$(".sectionBlock .tr").removeClass('hideRotation');
+		if(target != 'all'){
+			$(".tdrotation").each(function(){
+				sectionText =  $.trim($(this).text());
+				if(sectionText != target){
+					$(this).parent().addClass('hideRotation');
+				}
+			});			
+		}	
+	});		
+	$("body").on('click', '.tdseries', function(e) {
+		e.preventDefault();
+		target = $('a', this).text();
+		var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/getSeries.php';
+		$.ajax({
+			type: "GET",
+			url: apiurl + "?series=" + target,
+			cache: false,
+			dataType: "text",
+			success: function(d) {
+				var json = jQuery.parseJSON(d);
+				if(json != null){
+					//alert(json);
+					$(json).appendTo('body').modal();
+					//resultHtml = "<pre>" + json + "</pre>";
+					//$("#filteredItems").html(resultHtml);
+				}
+			}
+		});		
+	});    
+        
+});
+
+function getGuideResults(){
+	var loading = "<div class='loadingbox' id='loading' style='text-align:center'><img src='/content/ajax-loader.gif' /><br><b><span class='blink'>Please Wait... Loading Props for your Boat</span></b><br><br></div>"
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/propnew2.php';
+    var qs = "";
+
+	$("#filteredItems").html(loading);
+	showFilteredProducts();
+	
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+		url: apiurl + "?store=hss&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showPropTable(json);
+				//resultHtml = "<pre>" + json + "</pre>";
+                $("#filteredItems").html(resultHtml);
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+			showNormalProducts();
+        }
+    });    
+}
+function resetGuide(){
+    $("#stepOne select").val($("#stepOne select option:first").val()).change();    
+    $("#LayoutColumn1").show();
+    $(".js-faceted-search-column").show();
+    $("#subCats").show();
+    $("#filteredItems").hide();
+    //eraseCookie("sierraSelection");
+}    
+
+</script>     
+     %%Panel._category_criteo%%   
+        
+    </body>
+</html>

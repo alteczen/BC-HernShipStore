@@ -1,0 +1,31 @@
+%%Panel.HTMLHead%%
+    <body>
+        <script type="text/javascript" src="%%GLOBAL_CdnAppPath%%/javascript/checkout.js?%%GLOBAL_JSCacheToken%%"></script>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    <h1 class="TitleHeading">%%LNG_SecureCheckout%%</h1>
+                    <div class="Content Widest" id="LayoutColumn1">
+                        <div class="full-width">
+                            %%Panel.ChooseBillingAddress%%
+                            %%Panel.ChooseShippingAddress%%
+                            %%Panel.CheckoutNewAddressForm%%
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+        
+<script type="text/javascript">
+$(function(){
+$('#FormField_11').html('<option value="">Choose a Country</option><option value="United States">United States</option><option value="Canada">Canada</option>');
+$('#FormField_21').html('<option value="">Choose a Country</option><option value="United States">United States</option><option value="Canada">Canada</option>');
+});
+</script>        
+    </body>
+</html>

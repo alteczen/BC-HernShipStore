@@ -1,0 +1,168 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+
+<div class="error"></div>
+<div class="guideBox">
+    <div class="header">
+        <div class="guideIcon"><img src="/content/guide.gif" /></div>
+        <h3>Paint Selection Guide <span>Find the right paint for the job</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple col3">
+    <li id="stepOne">
+        <div class="question">1) What type of water is your boat in? </div>
+        <div class="selectBox">
+            
+            <select id="watertype" name="watertype">
+                <option value="">--</option>
+            </select>
+        </div>
+    </li>
+    <li id="stepTwo">
+        <div class="question">2) What is your hull material?</div>
+        <div class="selectBox">
+                 
+            <select id="hullmaterial" name="hullmaterial" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepThree">
+        <div class="question">3) Select a Paint Type:</div>
+        <div class="selectBox">
+            <a href="#type" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>   
+            <select id="painttype" name="painttype">
+                <option value="">--</option>
+            </select>
+        </div>
+    </li>
+    </ul>
+</div>
+                        <div id="filteredItems"></div>
+                        
+                        <button class="js-faceted-search-action btn">%%LNG_FilterBy%%</button>
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+<script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+<script type="text/javascript" src="%%ASSET_CustomJS/jquery.chained.remote.min.js%%"></script>
+<script src="%%ASSET_CustomJS/jquery.modal.min.js%%" type="text/javascript" charset="utf-8"></script>        
+<script type="text/javascript">
+$(document).ready(function() {    
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/paint.php';
+    $.ajax({
+        type: "POST",
+        url: apiurl + "?store=hss",
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#watertype').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });
+
+
+    $("#hullmaterial").remoteChained({
+        parents : "#watertype",
+        url : apiurl + "?store=hss",
+        loading : "Loading...",
+        clear : true
+    });
+    
+    $("#painttype").remoteChained({
+        parents : "#hullmaterial",
+        url : apiurl + "?store=hss",
+        loading : "Loading...",
+        clear : true,
+        depends : "#watertype"        
+    });    
+    $( "#painttype" ).change(function() {
+        if($(this).val() != ""){
+            getPaintResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+    
+        
+});
+function getPaintResults(){
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/paint.php';
+    var qs = "";
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+        url: apiurl + "?store=hss&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showFilteredParts(json,"Paints");
+                $("#filteredItems").html(resultHtml);
+                $("#LayoutColumn1").hide();
+                $(".js-faceted-search-column").hide();
+                $("#subCats").hide();
+                $("#filteredItems").show();                
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });    
+}
+function resetGuide(){
+    $("#stepOne select").val($("#stepOne select option:first").val()).change();    
+    $("#LayoutColumn1").show();
+    $(".js-faceted-search-column").show();
+    $("#subCats").show();
+    $("#filteredItems").hide();
+    //eraseCookie("sierraSelection");
+}    
+
+</script>     
+<div id="type" style="display:none">Coming Soon.</div>        
+
+        
+    </body>
+</html>

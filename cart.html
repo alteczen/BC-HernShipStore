@@ -1,0 +1,91 @@
+%%Panel.HTMLHead%%
+    <body>        
+        <script type="text/javascript" src="%%ASSET_CustomJS/custom-cart.js%%"></script>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    <div class="Content Widest" id="LayoutColumn1">
+                        %%Panel.CartBreadcrumb%%
+                        %%Panel.CartHeader%%
+                        <div class="fullwidth">      
+                            %%Panel.CartStatusMessage%%
+                            %%Panel.CartContent%%                          
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+        
+<script type="text/javascript">
+function setOrderCountdown(){
+    //get time countdown
+    $.ajax({
+      type: 'GET',
+      dataType: 'text',
+      //async: false,
+      url: 'https://api.wholesalemarine.com/getShippingCutoff.php',
+      success:function(data){
+        var cutoff = data;
+        var t = $.parseJSON(cutoff);
+        var timeleft = t["diff"];
+        var nextDay = t["nextDay"];        
+        setCountdownText(timeleft,nextDay);  
+        $('#productShippingCountDown').show();
+      },
+      error: function (request, status, error) {
+        //alert(request.responseText);
+        $('#productShippingCountDown').hide();
+      }
+    });        
+}
+
+function setCountdownText(timeleft,nextDay){
+    if(nextDay){
+      $('#shipDay').text('next business day');
+    }
+    if(timeleft > 0){
+        var endTimeDiff = new Date().getTime() + timeleft;
+        $('#timer').countdown({
+          date: endTimeDiff,
+          render: function(data) {
+            if(data.days>0){
+                $(this.el).html("<span>" + this.leadingZeros(data.days, 1) + " <label>day</label></span> <span>" + this.leadingZeros(data.hours, 1) + " <label>hrs</label></span> <span>" + this.leadingZeros(data.min, 1) + " <label>min</label> </span> <span>" + this.leadingZeros(data.sec, 1) + " <label>sec</label></span>");
+            }else{
+                $(this.el).html("<span>" + this.leadingZeros(data.hours, 1) + " <label>hrs</label></span> <span>" + this.leadingZeros(data.min, 1) + " <label>min</label> </span> <span>" + this.leadingZeros(data.sec, 1) + " <label>sec</label></span>");
+            }
+          },
+          onEnd: function() {
+            $('#productShippingCountDown').hide();
+          }
+        });        
+    }        
+}    
+    
+    $(document).ready(function() {
+      //calculate points earned
+       
+      subtotal = $(".earnedPointsValue").text();
+      subtotal = subtotal.replace("$","");
+      subtotal = subtotal.replace(",","");
+      subtotal = parseInt(subtotal);
+      if(isNaN(subtotal) || subtotal == 0){
+        $("#earnedPoints").hide();
+      }else{
+        //ptsMsg = "Checkout now and <span>earn " + subtotal + " reward points</span> for this order.<div><a href='/reward-points'>Learn more.</a> Applies only to registered customers, may vary when logged in.</div>";
+        //ptsMsg = "Rewards Points Earned: <span>" + subtotal + "</span></div>";  
+        //$("#earnedPoints").html(ptsMsg);
+        //$("#earnedPoints").show();
+    
+      }
+   
+        //setOrderCountdown();
+    });
+    
+</script>        
+        
+    </body>
+</html>

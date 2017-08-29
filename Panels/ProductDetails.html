@@ -1,0 +1,282 @@
+<link rel="stylesheet" type="text/css" href="%%GLOBAL_CdnAppPath%%/javascript/jquery/themes/cupertino/ui.all.css?%%GLOBAL_JSCacheToken%%" />
+<link rel="stylesheet" type="text/css" media="screen" href="%%GLOBAL_productAttributesCssPath%%?%%GLOBAL_JSCacheToken%%" />
+<script type="text/javascript" src="%%GLOBAL_jQueryUIPath%%"></script>
+<script type="text/javascript" src="%%GLOBAL_CdnAppPath%%/javascript/jquery/plugins/jquery.form.js?%%GLOBAL_JSCacheToken%%"></script>
+<script type="text/javascript" src="%%ASSET_CustomJS/product.attributes.custom.js%%"></script>
+<script type="text/javascript" src="%%GLOBAL_CdnAppPath%%/javascript/jquery/plugins/jCarousel/jCarousel.js?%%GLOBAL_JSCacheToken%%"></script>
+%%SNIPPET_ProductImageZoomer%%
+
+<script type="text/javascript">//<![CDATA[
+var ThumbURLs = new Array();
+var ProductImageDescriptions = new Array();
+var CurrentProdThumbImage = %%GLOBAL_CurrentProdThumbImage%%;
+var ShowVariationThumb =false;
+var ProductThumbWidth = %%GLOBAL_ProductThumbWidth%%;
+var ProductThumbHeight =  %%GLOBAL_ProductThumbHeight%%;
+var ProductMaxZoomWidth = %%GLOBAL_ProductMaxZoomWidth%%;
+var ProductMaxZoomHeight =  %%GLOBAL_ProductMaxZoomHeight%%;
+var ProductTinyWidth = %%GLOBAL_ProductMaxTinyWidth%%;
+var ProductTinyHeight =  %%GLOBAL_ProductMaxTinyHeight%%;
+
+%%GLOBAL_ProdImageJavascript%%
+
+//Don't enable Cloud Zoom (product image zoom) on touch device
+//Mouseenter/Mouseover events are not ideal for touch devices
+//for more info search for this code in /script/main.js
+if (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0)) {
+    var ShowImageZoomer = false;
+} else {
+    var ShowImageZoomer = %%GLOBAL_ShowImageZoomer%%;
+}
+
+var productId = %%GLOBAL_ProductId%%;
+//]]></script>
+%%Discount.FreeShippingEligibility%%
+<div class="Block Moveable Panel PrimaryProductDetails no-ptop" id="ProductDetails" itemscope itemtype="http://schema.org/Product">
+    <div class="BlockContent">
+        %%GLOBAL_ProductDetailFlashMessages%%
+        <!-- left-content -->
+        <div class="left-content">
+            <div class="ProductThumb" style="%%GLOBAL_HideProductThumb%%">
+                %%GLOBAL_LightBoxImageJavascript%%
+                %%SNIPPET_ProductThumbImage%%
+                <div class="ImageCarouselBox clearfix" style="margin:0 auto; %%GLOBAL_HideImageCarousel%%">
+                    <a id="ImageScrollPrev" class="prev" href="#"><img src="%%GLOBAL_IMG_PATH%%/LeftArrow.png" alt="" width="20" height="20" /></a>
+                    <div class="ProductTinyImageList">
+                        <ul>
+                            %%SNIPPET_ProductTinyImages%%
+                        </ul>
+                    </div>
+                    <a id="ImageScrollNext" class="next" href="#"><img src="%%GLOBAL_IMG_PATH%%/RightArrow.png" alt="" width="20" height="20" /></a>
+                </div>
+                <div style="%%GLOBAL_HideMorePicturesLink%%" class="SeeMorePicturesLink">
+                    <a href="#" onclick="%%GLOBAL_TinyImageClickJavascript%% return false;" class="ViewLarger">%%GLOBAL_SeeMorePictures%%</a>
+                </div>
+            </div>
+        </div>
+        <!-- Product Details Content -->
+        <div class="ProductMain">
+            <div class="ProductDetailsGrid">
+                <div class="DetailRow product-heading">
+                    <div class="Value" style="display: %%GLOBAL_HideBrandLink%%" itemprop="brand" itemscope itemtype="http://schema.org/Brand">
+                        <h4 class="BrandName"><a itemprop="url" href="%%GLOBAL_BrandLink%%"><span itemprop="name">%%GLOBAL_BrandName%%</span></a></h4>
+                    </div>
+
+                    <h1 itemprop="name">%%GLOBAL_ProductName%%</h1>
+
+                </div>                
+            </div>
+
+            %%GLOBAL_FacebookLikeButtonAbove%%
+            %%Panel.ProductTabs%%
+            %%SNIPPET_ProductAddToCartRight%%
+            %%SNIPPET_ProductExpectedReleaseDate%%
+        </div>
+
+        %%SNIPPET_ProductAddToCartBelow%%
+<div id="prodExtras">
+        <div id="prodAccordion1">
+            %%Panel.ProductDescription%%
+            %%Panel.ProductVideos%%
+            %%Panel.ProductWarranty%%
+            %%Panel.ProductOtherDetails%%
+            %%Panel.SimilarProductsByTag%%
+            %%Panel.ProductReviews%%
+            %%Panel.ProductByCategory%%
+            %%Panel.SimilarProductsByCustomerViews%% 
+        </div>
+        <div id="prodRelatedBox">
+<h2>Related Products</h2>
+<div data-nxt-rec="e9c62ce98725704e1f36da272a941e52-1"></div>
+            %%Panel.SideProductRelatedxx%%
+        </div>
+</div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+function setOrderCountdown(){
+    //get time countdown
+    $.ajax({
+      type: 'GET',
+      dataType: 'text',
+      //async: false,
+      url: 'http://api.wholesalemarine.com/getShippingCutoff.php',
+      success:function(data){
+        var cutoff = data;
+        var t = $.parseJSON(cutoff);
+        var timeleft = t["diff"];
+        var nextDay = t["nextDay"];        
+        setCountdownText(timeleft,nextDay);  
+        $('#productShippingCountDown').show();
+      },
+      error: function (request, status, error) {
+        //alert(request.responseText);
+        $('#productShippingCountDown').hide();
+      },
+      complete: function(){
+        setShippingMessage();
+      }
+    });        
+}
+
+function setCountdownText(timeleft,nextDay){
+    if(nextDay){
+      $('#shipDay').text('next business day');
+    }
+    if(timeleft > 0){
+        var endTimeDiff = new Date().getTime() + timeleft;
+        $('#timer').countdown({
+          date: endTimeDiff,
+          render: function(data) {
+            if(data.days>0){
+                $(this.el).html("<span>" + this.leadingZeros(data.days, 1) + " <label>day</label></span> <span>" + this.leadingZeros(data.hours, 1) + " <label>hrs</label></span> <span>" + this.leadingZeros(data.min, 1) + " <label>min</label> </span> <span>" + this.leadingZeros(data.sec, 1) + " <label>sec</label></span>");
+            }else{
+                $(this.el).html("<span>" + this.leadingZeros(data.hours, 1) + " <label>hrs</label></span> <span>" + this.leadingZeros(data.min, 1) + " <label>min</label> </span> <span>" + this.leadingZeros(data.sec, 1) + " <label>sec</label></span>");
+            }
+          },
+          onEnd: function() {
+            $('#productShippingCountDown').hide();
+          }
+        });        
+    }        
+}
+    
+function setShippingMessage(){
+    //get stock qty
+    var stock = parseInt($(".InventoryLevel .VariationProductInventory").text());
+    stock = $.trim(stock);
+    if (stock=="Out of stock"){
+      stock = stock;
+    }else{
+      stock = parseInt(Number(stock));
+    }
+
+    var shippingMessage = '';
+    var hideTimer = 1; 
+
+    if (stock=="Out of stock"){
+      shippingMessage = 'Out of Stock';
+    }else
+    if (isNaN(stock)){
+      shippingMessage = 'Select an option below';
+    }else 
+    if (stock <= 9000){
+      shippingMessage = 'In Stock';
+    }else  
+    {
+      shippingMessage = '<span>Ship in 7-10 Days</span>';
+    }
+    $('#shippingMessage').html(shippingMessage);
+    if(hideTimer){
+      $('#productShippingCountDown').hide();
+    }else{
+      $('#productShippingCountDown').show();
+    }
+}
+    
+function calculateSavings(perc,isload){
+    isload = isload || 0;
+            
+    var curPrice = $('.ProductDetailsGrid .VariationProductPrice').text();
+    curPrice = Number(curPrice.replace(/[^0-9\.]+/g,""));
+    var newList = curPrice/(1-perc);
+    var listText = 'List Price: <b>$' + parseFloat(newList, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</b>';
+    
+    var savings = newList - curPrice;
+    var savingsText = '$' + parseFloat(savings, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    
+    var formattedPerc = perc*100;
+    formattedPerc = formattedPerc.toFixed(0);    
+    if(savings > 0){                
+      $('#savings').html('You save: <span>' + savingsText + ' (' + formattedPerc + '%)</span>');
+      $('#listprice').html(listText);
+      $('#listprice').show();
+    }else{
+      $('#listprice').hide();
+      $('#listprice').html('');
+      $('#savings').html('');
+    }
+
+    if(isload){
+      //page initial load
+      if ($(".productAttributeList .productAttributeRow").length > 0){
+        //no page atts
+        $(".productPriceBox .productPriceLabel").text("Starting At:");
+      }
+    }else{
+      var allSelected = 1;
+      $( ".productAttributeRow" ).each(function() {
+        if($(this).find('.selectedValue').length == 0){
+          allSelected = 0;
+        }
+      });
+      if(allSelected){
+        $(".productPriceBox .productPriceLabel").text("Our Price:");
+      }
+    }
+}
+
+function setFreeShipping(){
+$("#ProductOtherDetails .DetailRow").each(function(){
+    var label = $(".Label",this).text();
+    if(label.toLowerCase() == "shipping:"){
+       shippingType = $(".Value",this).text();
+       shippingType = shippingType.replace(/(\r\n|\n|\r)/gm,"");
+       shippingType = shippingType.trim();
+       if(shippingType.toLowerCase() =='free shipping'){
+         $(".ProductThumbImage").prepend("<div id='fs'><img src='https://cdn3.bigcommerce.com/s-yya3gguj3d/product_images/uploaded_images/fs.png'/></div>");
+       }
+    }else if(label.toLowerCase().startsWith('google')){
+         $(this).addClass('hide');
+    }
+});
+}
+
+function setBulkDeal(){
+  var deal = $('.bulkDeal li:first-child').text();
+  dealWords = deal.split(" ");
+  var arrayLength = dealWords.length;
+  var newDeal = "";
+  for (var i = 0; i < arrayLength; i++){
+    if(i==2){
+      newDeal += "or ";
+    }else if(i==3){
+      newDeal += "More ";
+    }else{
+      newDeal = newDeal + dealWords[i] + " ";
+    }
+  }      
+  $('.bulkDeal li:first-child').text(newDeal);
+}
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
+
+
+$(function() {    
+    var defaultListPrice = $('.ProductDetailsGrid .RetailPrice').text();
+    var defaultPrice = $('.ProductDetailsGrid .VariationProductPrice').text();
+    defaultListPrice = Number(defaultListPrice.replace(/[^0-9\.]+/g,""));
+    defaultPrice = Number(defaultPrice.replace(/[^0-9\.]+/g,""));
+    var savings = defaultListPrice - defaultPrice;
+    var perc = (savings/defaultListPrice);  
+    calculateSavings(perc,1);
+    setBulkDeal();
+    //setOrderCountdown();
+    setShippingMessage();
+    setFreeShipping();
+    
+
+    $('.ProductDetailsGrid .VariationProductPrice').bind("DOMSubtreeModified",function(){  
+       calculateSavings(perc);
+    });   
+});    
+
+</script>

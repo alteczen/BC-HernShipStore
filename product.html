@@ -1,0 +1,66 @@
+%%Panel.HTMLHead%%
+    <body class="productPage">
+        <script type="text/javascript" src="%%GLOBAL_CdnAppPath%%/javascript/jquery/plugins/validate/jquery.validate.js?%%GLOBAL_JSCacheToken%%"></script>
+        <script type="text/javascript" src="%%GLOBAL_TPL_PATH%%/js/product.functions.js?%%GLOBAL_JSCacheToken%%"></script>
+        <script type="text/javascript" src="%%GLOBAL_CdnAppPath%%/javascript/product.js?%%GLOBAL_JSCacheToken%%"></script>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.ProductBreadcrumb%%
+                    %%Panel.ProductDetails%%                                       
+                    <div class="clear"></div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+
+            <script type="text/javascript">
+
+            $(window).load(function() {
+                if ($('.wishTrigger:visible').size() != 0) {
+
+                    $('html').click(function() {
+                        $('#SideProductAddToWishList .BlockContent').slideUp(300);
+                    });
+
+
+                    $('.wishTrigger').click(function(event){
+                        event.stopPropagation();
+                        var x = $('.wishTrigger').offset().left;
+                        var y = $('.wishTrigger').offset().top;
+                        $('#SideProductAddToWishList').css('top', y).css('left', x).css('position', 'absolute').show();
+                        $('#SideProductAddToWishList .BlockContent').slideToggle(300);
+                    });
+                    $('#SideProductAddToWishList .BlockContent').click(function(event){
+                        event.stopPropagation();
+                    });
+                }
+                $('.prodAccordion > div > h2').click(function(){
+                    $('#SideProductAddToWishList .BlockContent').slideUp(300);
+                });
+                
+                $('.prodAccordion .prodAccordionContent').show();
+                
+
+            });
+                $(document).ready(function() {
+                if($('.videoRow').size() > 0) {
+                    $('.videoRow').bind('click', function () {
+                        var videoId = $(this).attr('id').replace('video_', '');
+                        $('#FeaturedVideo').html('<object>'
+                            + '<param name="movie" value="//www.youtube.com/v/' + videoId + '?fs=1"></param>'
+                            + '<param name="allowFullScreen" value="true"></param>'
+                            + '<param name="allowscriptaccess" value="always"></param>'
+                            + '<embed src="//www.youtube.com/v/'  + videoId + '?&fs=1&autoplay=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true"></embed>'
+                            + '</object>'
+                            );
+                        selectCurrentVideo(videoId);
+                    });
+                }
+            });
+            </script>
+        </div>
+    </body>
+</html>

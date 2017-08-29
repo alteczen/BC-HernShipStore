@@ -1,0 +1,27 @@
+%%Panel.HTMLHead%%
+    <body id="home">
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    <div class="Content Widest" id="LayoutColumn1">
+                        %%Panel.HomeSlideShow%%
+                        <div class="homeDiscount">%%Discount.FreeShippingEligibility%%</div>
+                        %%Banner.TopBanner%%                        
+                        %%Panel.HomeFeaturedProducts%%
+                        %%Panel.HomeNewProducts%%
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+        <script type="text/javascript">        
+            $(function() {  
+            $('.navBox .dd').addClass('fixed');
+            });
+        </script>        
+    </body>
+</html>

@@ -1,0 +1,205 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+
+<div class="error"></div>
+<div class="guideBox  bimini">
+    <div class="header">   
+        <div class="guideIcon"><img src="/content/guide.gif" /></div>
+        <h3>Bimini Selection Guide <span>Find the perfect bimini</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple 4col">
+    <li id="stepOne">
+        <div class="question">1) Boat type: </div>
+        <div class="selectBox">
+            <a href="#mboattype" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>
+            <select id="boattype" name="boattype">
+                <option value="">--</option>
+            </select>        
+        </div>
+    </li>
+    <li id="stepTwo">
+        <div class="question">2) Boat width:</div>
+        <div class="selectBox">
+            <a href="#mboatwidth" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>        
+            <select id="boatwidth" name="boatwidth" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepThree">
+        <div class="question">3) Bimini height: </div>
+        <div class="selectBox">
+            <a href="#mbiminiheight" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>        
+            <select id="biminiheight" name="biminiheight">
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepFour">
+        <div class="question">Bimini length:</div>
+        <div class="selectBox">
+            <a href="#mbiminilength" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>        
+            <select id="biminilength" name="biminilength">
+                <option value="">--</option>
+            </select> 
+        </div>
+    </li>        
+    </ul>
+</div>
+                        <div id="filteredItems"></div>                        
+                        <button class="js-faceted-search-action btn">%%LNG_FilterBy%%</button>
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+<script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+<script type="text/javascript" src="%%ASSET_CustomJS/jquery.chained.remote.min.js%%"></script>
+<script src="%%ASSET_CustomJS/jquery.modal.min.js%%" type="text/javascript" charset="utf-8"></script>        
+<script type="text/javascript">
+$(document).ready(function() {    
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/bimini.php';
+
+    $.ajax({
+        type: "POST",
+        //url: "http://api.wholesalemarine.com/bimini.php?store=hss",
+        url: apiurl + "?store=hss",
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#boattype').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });
+
+
+    $("#boatwidth").remoteChained({
+        parents : "#boattype",
+        url : apiurl + "?store=hss",
+        loading : "Loading...",
+        clear : true
+    });
+    
+    $("#biminiheight").remoteChained({
+        parents : "#boatwidth",
+        url : apiurl + "?store=hss",
+        loading : "Loading...",
+        clear : true,
+        depends : "#boattype"        
+    });   
+    $("#biminilength").remoteChained({
+        parents : "#biminiheight",
+        url : apiurl + "?store=hss",
+        loading : "Loading...",
+        clear : true,
+        depends : "#boattype,#boatwidth"        
+    });     
+    $( "#biminilength" ).change(function() {
+        if($(this).val() != ""){
+            getGuideResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+    
+        
+});
+function getGuideResults(){
+    var apiurl = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'api.wholesalemarine.com/bimini.php';
+    var qs = "";
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+        url: apiurl + "?store=hss&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showFilteredParts(json,"Biminis");
+                $("#filteredItems").html(resultHtml);
+                $("#LayoutColumn1").hide();
+                $(".js-faceted-search-column").hide();
+                $("#subCats").hide();
+                $("#filteredItems").show();                
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });    
+}
+function resetGuide(){
+    $("#stepOne select").val($("#stepOne select option:first").val()).change();    
+    $("#LayoutColumn1").show();
+    $(".js-faceted-search-column").show();
+    $("#subCats").show();
+    $("#filteredItems").hide();
+    //eraseCookie("sierraSelection");
+}    
+
+</script>     
+       
+<div id="mboattype" style="display:none" class="guideModal">
+    <div class="helpHeader">Is the bimini for a boat, pontoon or tower on a boat?</div>
+    <ul class="simple">
+        <li><img src="/content/guides/bimini/boat.jpg"/><br>Boat</li>
+        <li><img src="/content/guides/bimini/pontoon.jpg"/><br>Pontoon</li>
+        <li><img src="/content/guides/bimini/tower.jpg"/><br>Tower on Boat</li>
+    </ul>        
+</div>   
+<div id="mboatwidth" style="display:none" class="guideModal">
+    <div class="helpHeader">How wide is your boat?</div>
+    <img src="/content/guides/bimini/width.jpg"/>
+</div>
+<div id="mbiminiheight" style="display:none" class="guideModal">
+    <div class="helpHeader">How tall do you want the bimini to be?</div>
+    <img src="/content/guides/bimini/height.jpg"/>        
+</div>        
+<div id="mbiminilength" style="display:none" class="guideModal">
+    <div class="helpHeader">How long do you want the bimini to be?</div>
+    <img src="/content/guides/bimini/length.jpg"/>        
+</div>
+
+        
+    </body>
+</html>

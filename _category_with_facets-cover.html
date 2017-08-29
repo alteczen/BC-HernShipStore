@@ -1,0 +1,404 @@
+%%Panel.HTMLHead%%
+    <body>
+        %%Panel.DrawerMenu%%
+        <div class="page">
+            %%Panel.Header%%
+            <div class="main">
+                <div class="inner">
+                    %%Panel.WrapperBanner%%
+                    %%Panel.CategoryBreadcrumb%%
+                    <div class="productlist-page">
+                        %%Banner.TopBanner%%
+                        %%Panel.CategoryHeading%%
+
+<div class="error"></div>
+<div class="guideSelect">
+  <div class="guideBox">
+  <div class="guideIcon"><img src="/content/guide.gif" /></div>
+    <h3>Cover Selection Guide</h3>
+  </div>
+  <div class="customSelect">
+    <div>Choose Your Brand &amp; Model</div> 
+    <ul class="points">
+      <li>Custom &amp; semi-custom fit</li>
+      <li>Two fabric choices</li>
+      <li>Approved for trailering</li>
+    </ul>
+    <a href="#" class="custom">Find Your Cover</a>
+  </div>
+  <div class="orSplit">OR</div>
+  <div class="universalSelect">
+    <div>Choose Your Boat Type</div> 
+    <ul class="points">
+      <li>Semi-custom &amp; universal fit </li>
+      <li>One fabric choice</li>
+      <li>Approved for trailering</li>
+    </ul>
+    <a href="#" class="universal">Find Your Cover</a>
+  </div>
+</div>                       
+<div class="guideBox universalCover hide">
+    <div class="header">
+<div class="guideIcon"><img src="/content/guide.gif" /></div>        
+        <h3>Cover Selection Guide <span>Find the boat cover that fits</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple 4col">
+    <li id="stepOne">
+        <div class="question">1) Boat style: </div>
+        <div class="selectBox">
+            <a href="#mboatstyle" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>
+            <select id="boatstyle" name="boatstyle">
+                <option value="">--</option>
+            </select>        
+        </div>
+    </li>
+    <li id="stepTwo">
+        <div class="question">2) Boat length:</div>
+        <div class="selectBox">
+            <a href="#mboatlength" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>        
+            <select id="boatlength" name="boatlength" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepThree">
+        <div class="question">3) Maximum Beam: </div>
+        <div class="selectBox">
+            <a href="#mmaxbeam" rel="modal:open"><i class="fa fa-icon-info-sign"></i></a>        
+            <select id="maxbeam" name="maxbeam">
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>
+    <li id="stepFour">
+        <div class="question">Drive type:</div>
+        <div class="selectBox">
+            <select id="drivetype" name="drivetype">
+                <option value="">--</option>
+            </select> 
+        </div>
+    </li>        
+    </ul>
+</div>
+<div class="guideBox customCover hide">
+    <div class="header">
+<div class="guideIcon"><img src="/content/guide.gif" /></div>        
+        <h3>Cover Selection Guide <span>Find the boat cover that fits</span></h3>
+        <a href='#' id='resetButton' onclick='resetGuide();return false;'>Clear</a>
+    </div>
+    <ul class="simple col2">
+    <li id="stepOne">
+        <div class="question">1) Manufacturer: </div>
+        <div class="selectBox">            
+            <select id="mfg" name="mfg">
+                <option value="">--</option>
+            </select>        
+        </div>
+    </li>
+    <li id="stepTwo">
+        <div class="question">2) Model &amp; Year:</div>
+        <div class="selectBox">
+            <select id="model" name="model" disabled>
+                <option value="">--</option>
+            </select>    
+        </div>
+    </li>           
+    </ul>
+</div>
+                        
+                        <div id="filteredItems"></div>
+                        
+                        <button class="js-faceted-search-action btn">%%LNG_FilterBy%%</button>
+                        <div class="Left fleft js-faceted-search-column">
+                            %%Panel.FacetedSearch%%
+                        </div>                     
+                        <div class="Content Wide %%GLOBAL_ExtraCategoryClass%%" id="LayoutColumn1">                            
+                            <div class="product-nav">
+                                %%SNIPPET_CategorySortBox%%
+                                %%Panel.CategoryPagingTop%%
+                                <div class="clear"></div>
+                            </div>
+                            %%Panel.CategoryContent%%
+                        </div>
+    <div class="CategoryDescription">
+        
+        %%GLOBAL_CatDesc%%
+        
+        %%Panel.SubCategoriesMobileMenu%%
+    </div>                        
+                        <div class="clear"></div>
+                        %%Banner.BottomBanner%%
+                    </div>
+                </div>
+            </div>
+            %%Panel.Footer%%
+        </div>
+
+<script type="text/javascript" src="%%ASSET_CustomJS/customCategory.js%%"></script>  
+<script type="text/javascript" src="%%ASSET_CustomJS/jquery.chained.remote.min.js%%"></script>
+<script src="%%ASSET_CustomJS/jquery.modal.min.js%%" type="text/javascript" charset="utf-8"></script>        
+<script type="text/javascript">
+$(document).ready(function() {    
+    srcUrl = ('https:' == document.location.protocol ? 'https://api' : 'http://api') + '.wholesalemarine.com/';
+    $.ajax({
+        type: "POST",
+        url: srcUrl + "cover-gen.php?store=hss",
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#boatstyle').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        }
+    });
+    
+    $.ajax({
+        type: "POST",
+        url: srcUrl + "cover-custom.php?store=hss",
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = $.parseJSON(d);
+            $.each(json, function(k, v) {
+                $('#mfg').append($("<option></option>").attr("value",k.toLowerCase()).text(v));         
+            });            
+            
+        }
+    });  
+    
+    $("#model").remoteChained({
+        parents : "#mfg",
+        url : srcUrl + "cover-custom.php?store=hss",
+        loading : "Loading...",
+        clear : true
+    });
+    $( "#model" ).change(function() {
+        if($(this).val() == "notlisted"){
+            //alert('nl 2');
+        }else if($(this).val() != ""){
+            getCustomGuideResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+    $( "#mfg" ).change(function() {
+        if($(this).val() == "notlisted"){
+			$('.customCover').hide();
+            $('.universalCover').show();			
+        }
+    });    
+    
+
+    $("#boatlength").remoteChained({
+        parents : "#boatstyle",
+        url : srcUrl + "cover-gen.php?store=hss",
+        loading : "Loading...",
+        clear : true
+    });
+    
+    $("#maxbeam").remoteChained({
+        parents : "#boatlength",
+        url : srcUrl + "cover-gen.php?store=hss",
+        loading : "Loading...",
+        clear : true,
+        depends : "#boatstyle"        
+    });   
+    $("#drivetype").remoteChained({
+        parents : "#maxbeam",
+        url : srcUrl + "cover-gen.php?store=hss",
+        loading : "Loading...",
+        clear : true,
+        depends : "#boatstyle,#boatlength"        
+    });     
+    $( "#drivetype" ).change(function() {
+        if($(this).val() != ""){
+            getGuideResults();
+        }else{
+            $("#filteredItems").html("");
+        }
+    });
+
+    $( "a.universal" ).click(function() {
+        $('.universalCover').show();
+        $('.guideSelect').hide();
+    });
+    $( "a.custom" ).click(function() {
+        $('.customCover').show();
+        $('.guideSelect').hide();
+    });  
+
+   $( ".styleSelector li" ).click(function() {
+        sel = $('.tag',this).text();
+        $.modal.close();        
+        $("#boatstyle").val(sel).change();   
+    });  
+
+//Paging code
+    var page = 1;
+    $(".styleSelector > li").slice(0, 8).addClass('page1');
+    $(".styleSelector > li").slice(8, 16).addClass('page2').hide();
+    $(".styleSelector > li").slice(16, 24).addClass('page3').hide();
+    $(".styleSelector > li").slice(24, 32).addClass('page4').hide();
+    $(".styleSelector > li").slice(32, 40).addClass('page5').hide();
+    $(".styleSelector > li").slice(40, 44).addClass('page6').hide();
+
+    var maxPage = 6;
+    $('.next span').on('click', function() {
+      if (page < maxPage) {
+        $(".styleSelector > li:visible").hide();
+        $('.page' + ++page).show();
+      }
+      if (page == maxPage){
+        $(this).hide();
+      }else{
+        $(this).show();
+      }
+      $('.prev span').show();
+    })
+     $('.prev span').on('click', function() {
+      if (page > 1) {
+        $(".styleSelector > li:visible").hide();
+        $('.page' + --page).show();        
+      }
+      if (page == 1){
+        $(this).hide();
+      }else{
+        $(this).show();
+      }
+      $('.next span').show();
+    })
+        
+});
+function getGuideResults(){
+    var qs = "";
+    srcUrl = ('https:' == document.location.protocol ? 'https://api' : 'http://api') + '.wholesalemarine.com/';
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+        url: srcUrl + "cover-gen.php" + "?store=hss&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showFilteredParts(json,"Covers");
+                $("#filteredItems").html(resultHtml);
+                $("#LayoutColumn1").hide();
+                $(".js-faceted-search-column").hide();
+                $("#subCats").hide();
+                $("#filteredItems").show();                
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });    
+}
+function getCustomGuideResults(){
+    var qs = "";
+    srcUrl = ('https:' == document.location.protocol ? 'https://api' : 'http://api') + '.wholesalemarine.com/';
+    $('select > option:selected').each(function() {        
+        qs += $(this).parent().attr("name") + '=' + $(this).val() + "&";
+    });
+    $.ajax({
+        type: "GET",
+        url: srcUrl + "cover-custom.php" + "?store=hss&" + qs,
+        cache: false,
+        dataType: "text",
+        success: function(d) {
+            var json = jQuery.parseJSON(d);
+            if(json != null){
+                resultHtml = showFilteredParts(json,"Covers");
+                $("#filteredItems").html(resultHtml);
+                $("#LayoutColumn1").hide();
+                $(".js-faceted-search-column").hide();
+                $("#subCats").hide();
+                $("#filteredItems").show();                
+            }
+        },
+        error: function(){
+            $(".error").html(errorMsg);
+        }
+    });    
+}    
+function resetGuide(){
+    $("#stepOne select").val($("#stepOne select option:first").val()).change();    
+    $("#LayoutColumn1").show();
+    $(".js-faceted-search-column").show();
+    $("#subCats").show();
+    $("#filteredItems").hide();
+    $('.guideSelect').show();
+    $('.customCover').hide();
+    $('.universalCover').hide();
+    //eraseCookie("sierraSelection");
+}    
+
+</script>     
+       
+<div id="mboatstyle" style="display:none" class="guideModal">
+    <div class="helpHeader">Select style</div>
+<ul class="styleSelector">
+<li><div class='tag'>aluminum deep v-hull fishing boats with motor hood</div><img src="/content/guides/cover/aluminumdeepv-hullfishingboatswithmotorhood.jpg" /><div class="styleName">Aluminum Deep V-Hull Fishing Boats With Motor Hood</div></li>
+<li><div class='tag'>aluminum deep v-hull fishing boats without motor hood</div><img src="/content/guides/cover/aluminumdeepv-hullfishingboatswithoutmotorhood.jpg" /><div class="styleName">Aluminum Deep V-Hull Fishing Boats Without Motor Hood</div></li>
+<li><div class='tag'>aluminum square bow bass boat</div><img src="/content/guides/cover/aluminumsquarebowbassboat.jpg" /><div class="styleName">Aluminum Square Bow Bass Boat</div></li>
+<li><div class='tag'>aluminum tournament style tri-hull fishing</div><img src="/content/guides/cover/aluminumtournamentstyletri-hullfishing.jpg" /><div class="styleName">Aluminum Tournament Style Tri-Hull Fishing</div></li>
+<li><div class='tag'>aluminum v-hull fish with motor hood</div><img src="/content/guides/cover/aluminumv-hullfishwithmotorhood.jpg" /><div class="styleName">Aluminum V-Hull Fish With Motor Hood</div></li>
+<li><div class='tag'>aluminum v-hull fish without motor hood</div><img src="/content/guides/cover/aluminumv-hullfishwithoutmotorhood.jpg" /><div class="styleName">Aluminum V-Hull Fish Without Motor Hood</div></li>
+<li><div class='tag'>bass boat - angled transom</div><img src="/content/guides/cover/bassboat-angledtransom.jpg" /><div class="styleName">Bass Boat - Angled Transom</div></li>
+<li><div class='tag'>bass boat - molded plastic</div><img src="/content/guides/cover/bassboat-moldedplastic.jpg" /><div class="styleName">Bass Boat - Molded Plastic</div></li>
+<li><div class='tag'>bass boat - tournament style</div><img src="/content/guides/cover/bassboat-tournamentstyle.jpg" /><div class="styleName">Bass Boat - Tournament Style</div></li>
+<li><div class='tag'>center console - inshore fishing</div><img src="/content/guides/cover/centerconsole-inshorefishing.jpg" /><div class="styleName">Center Console - Inshore Fishing</div></li>
+<li><div class='tag'>center console - offshore fishing</div><img src="/content/guides/cover/centerconsole-offshorefishing.jpg" /><div class="styleName">Center Console - Offshore Fishing</div></li>
+<li><div class='tag'>center console - rounded bay style</div><img src="/content/guides/cover/centerconsole-roundedbaystyle.jpg" /><div class="styleName">Center Console - Rounded Bay Style</div></li>
+<li><div class='tag'>center console - square bow bay style boat</div><img src="/content/guides/cover/centerconsole-squarebowbaystyleboat.jpg" /><div class="styleName">Center Console - Square Bow Bay Style Boat</div></li>
+<li><div class='tag'>center console - v-hull bay style</div><img src="/content/guides/cover/centerconsole-v-hullbaystyle.jpg" /><div class="styleName">Center Console - V-Hull Bay Style</div></li>
+<li><div class='tag'>conventional tournament ski boats w/tower</div><img src="/content/guides/cover/conventionaltournamentskiboatstower.jpg" /><div class="styleName">Conventional Tournament Ski Boats w/Tower</div></li>
+<li><div class='tag'>day cruiser</div><img src="/content/guides/cover/daycruiser.jpg" /><div class="styleName">Day Cruiser</div></li>
+<li><div class='tag'>deck boats</div><img src="/content/guides/cover/deckboats.jpg" /><div class="styleName">Deck Boats</div></li>
+<li><div class='tag'>deck boats</div><img src="/content/guides/cover/deckboats.jpg" /><div class="styleName">Deck Boats</div></li>
+<li><div class='tag'>euro style walk-around cuddy cabin boats</div><img src="/content/guides/cover/eurostylewalk-aroundcuddycabinboats.jpg" /><div class="styleName">Euro Style Walk-Around Cuddy Cabin Boats</div></li>
+<li><div class='tag'>euro tournament ski boats w/wakeboard tower</div><img src="/content/guides/cover/eurotournamentskiboatswakeboardtower.jpg" /><div class="styleName">Euro Tournament Ski Boats w/Wakeboard Tower</div></li>
+<li><div class='tag'>euro v-hull runabouts</div><img src="/content/guides/cover/eurov-hullrunabouts.jpg" /><div class="styleName">Euro V-Hull Runabouts</div></li>
+<li><div class='tag'>euro v-hull runabouts with wakeboard tower</div><img src="/content/guides/cover/eurov-hullrunaboutswithwakeboardtower.jpg" /><div class="styleName">Euro V-Hull Runabouts with Wakeboard Tower</div></li>
+<li><div class='tag'>fish n ski</div><img src="/content/guides/cover/fishnski.jpg" /><div class="styleName">Fish n Ski</div></li>
+<li><div class='tag'>flats boat</div><img src="/content/guides/cover/flatsboat.jpg" /><div class="styleName">Flats Boat</div></li>
+<li><div class='tag'>inflatable dinghies</div><img src="/content/guides/cover/inflatabledinghies.jpg" /><div class="styleName">Inflatable Dinghies</div></li>
+<li><div class='tag'>inflatable sport boats</div><img src="/content/guides/cover/inflatablesportboats.jpg" /><div class="styleName">Inflatable Sport Boats</div></li>
+<li><div class='tag'>jet boats</div><img src="/content/guides/cover/jetboats.jpg" /><div class="styleName">Jet Boats</div></li>
+<li><div class='tag'>jon boat</div><img src="/content/guides/cover/jonboat.jpg" /><div class="styleName">Jon Boat</div></li>
+<li><div class='tag'>paddle boats</div><img src="/content/guides/cover/paddleboats.jpg" /><div class="styleName">Paddle Boats</div></li>
+<li><div class='tag'>pontoon (full deck)</div><img src="/content/guides/cover/pontoon(fulldeck).jpg" /><div class="styleName">Pontoon (Full Deck)</div></li>
+<li><div class='tag'>pontoon (play pen)</div><img src="/content/guides/cover/pontoon(playpen).jpg" /><div class="styleName">Pontoon (Play Pen)</div></li>
+<li><div class='tag'>ski boat - competition</div><img src="/content/guides/cover/skiboat-competition.jpg" /><div class="styleName">Ski Boat - Competition</div></li>
+<li><div class='tag'>t-top boat covers w/ bow rails </div><img src="/content/guides/cover/t-topboatcoversbowrails.jpg" /><div class="styleName">T-Top Boat Covers w/ Bow Rails</div></li>
+<li><div class='tag'>t-top boat covers without bow rails</div><img src="/content/guides/cover/t-topboatcoverswithoutbowrails.jpg" /><div class="styleName">T-Top Boat Covers without Bow Rails</div></li>
+<li><div class='tag'>tri-hull - modified</div><img src="/content/guides/cover/tri-hull-modified.jpg" /><div class="styleName">Tri-Hull - Modified</div></li>
+<li><div class='tag'>tri-hull boats</div><img src="/content/guides/cover/tri-hullboats.jpg" /><div class="styleName">Tri-Hull Boats</div></li>
+<li><div class='tag'>v-hull closed bow</div><img src="/content/guides/cover/v-hullclosedbow.jpg" /><div class="styleName">V-Hull Closed Bow</div></li>
+<li><div class='tag'>v-hull cuddy cabin</div><img src="/content/guides/cover/v-hullcuddycabin.jpg" /><div class="styleName">V-Hull Cuddy Cabin</div></li>
+<li><div class='tag'>v-hull fish n ski boats</div><img src="/content/guides/cover/v-hullfishnskiboats.jpg" /><div class="styleName">V-Hull Fish n Ski Boats</div></li>
+<li><div class='tag'>v-hull runabout - bowrider</div><img src="/content/guides/cover/v-hullrunabout-bowrider.jpg" /><div class="styleName">V-Hull Runabout - Bowrider</div></li>
+<li><div class='tag'>v-hull runabout - closed bow</div><img src="/content/guides/cover/v-hullrunabout.jpg" /><div class="styleName">V-Hull Runabout - Closed Bow</div></li>
+<li><div class='tag'>v-hull sport boat</div><img src="/content/guides/cover/v-hullsportboat.jpg" /><div class="styleName">V-Hull Sport Boat</div></li>
+<li><div class='tag'>v-hull walk around cuddy</div><img src="/content/guides/cover/v-hullwalkaroundcuddy.jpg" /><div class="styleName">V-Hull Walk Around Cuddy</div></li>
+</ul>
+<div class="prev"><span style="display:none">Prev</span></div>       
+<div class="next"><span>Next</span></div>
+</div>   
+<div id="mboatlength" style="display:none" class="guideModal">
+    <div class="helpHeader">What is the length of your boat?</div>
+    <img src="/content/guides/cover/boatmeasure.jpg"/>
+</div>
+<div id="mmaxbeam" style="display:none" class="guideModal">
+    <div class="helpHeader">What is your max beam?</div>
+    <img src="/content/guides/cover/boatmeasure.jpg"/>        
+</div>        
+
+        
+    </body>
+</html>
